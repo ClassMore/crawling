@@ -14,8 +14,7 @@ import lombok.Getter;
 public class Lecture {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
     private String image;
     private String salePercent;
     private String title;
@@ -28,7 +27,7 @@ public class Lecture {
 
     }
 
-    public Lecture(Long id, String image, String salePercent, String title, String url, String instructor, String price,
+    public Lecture(String id, String image, String salePercent, String title, String url, String instructor, String price,
                    String salePrice) {
         this.id = id;
         this.image = image;

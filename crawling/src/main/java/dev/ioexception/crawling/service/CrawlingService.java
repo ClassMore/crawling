@@ -1,28 +1,20 @@
 package dev.ioexception.crawling.service;
 
 import dev.ioexception.crawling.entity.Lecture;
-import dev.ioexception.crawling.page.site.CrawlingSite;
-import dev.ioexception.crawling.page.site.InflearnCrawling;
-import java.io.IOException;
-import java.util.List;
+import dev.ioexception.crawling.page.site.GoormCrawling;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.util.List;
+
 @Service
+@RequiredArgsConstructor
 public class CrawlingService {
+    private final GoormCrawling goormCrawling;
 
-    private final CrawlingSite crawlingSite;
+    public List<Lecture> getGr() throws IOException {
 
-    public CrawlingService(InflearnCrawling inflearnCrawling) {
-        this.crawlingSite = inflearnCrawling;
+        return goormCrawling.getSaleLecture();
     }
-
-    public List<Lecture> getInflearn() throws IOException {
-
-        return crawlingSite.getSaleLecture();
-    }
-
-//    public List<Lecture> getFastCampus() throws IOException {
-//
-//        return crawlingSite.getSaleLecture();
-//    }
 }

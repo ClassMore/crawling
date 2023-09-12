@@ -16,7 +16,7 @@ public class CrawlingController {
 
     @GetMapping("/")
     public String craw(Model model) throws IOException {
-        List<Lecture> lectureList = crawlingService.getInflearn();
+        List<Lecture> lectureList = crawlingService.getGr();
 
         model.addAttribute("lecture", lectureList);
         return "lecture";
