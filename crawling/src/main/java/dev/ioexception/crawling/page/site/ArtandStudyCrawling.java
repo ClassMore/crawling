@@ -7,17 +7,24 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import dev.ioexception.crawling.entity.Lecture;
+import dev.ioexception.crawling.entity.LectureIndex;
 import dev.ioexception.crawling.entity.LectureTag;
 import dev.ioexception.crawling.entity.Tag;
 import dev.ioexception.crawling.page.UploadImage;
+import dev.ioexception.crawling.repository.LectureIndexRepository;
 import dev.ioexception.crawling.repository.LectureRepository;
 import dev.ioexception.crawling.repository.LectureTagRepository;
 import dev.ioexception.crawling.repository.TagRepository;
@@ -32,6 +39,7 @@ public class ArtandStudyCrawling {
     private final LectureTagRepository lectureTagRepository;
     private final TagRepository tagRepository;
     private final UploadImage uploadImage;
+    private final LectureIndexRepository lectureIndexRepository;
 
     public void getSaleLecture() throws IOException {
         String[][] sub_category = {{},
@@ -60,29 +68,46 @@ public class ArtandStudyCrawling {
 
                 Elements contents = document.select(
                         "#content > div.wrap > div > div > ul > li:nth-child(4) > ul > a");
-                for (Element content : contents) {
-                    Lecture lecture = Lecture.builder()
-                            .lectureId(getLectureId(content))
-                            .title(getTitle(content))
-                            .instructor(getInstructor(content))
-                            .companyName("ArtandStudy")
-                            .ordinaryPrice(getPrice(content))
-                            .salePrice(getSalePrice(content))
-                            .salePercent(getSalePercent(content))
-                            .siteLink(getUrl(content))
-                            .imageLink(getImage(content))
-                            .date(LocalDate.now())
-                            .build();
 
-                    lectureRepository.save(lecture);
-
-                    // 강의 태그 중간테이블을 저장한다.
-                    LectureTag lectureTag = new LectureTag();
-                    lectureTag.setTag(tag);
-                    lectureTag.setLecture(lecture);
-                    lectureTagRepository.save(lectureTag);
-                }
+                saveLecture(tag, contents);
             }
+        }
+    }
+
+    private void saveLecture(Tag tag, Elements contents) throws IOException {
+        for (Element content : contents) {
+            Lecture lecture = Lecture.builder()
+                    .lectureId(getLectureId(content))
+                    .title(getTitle(content))
+                    .instructor(getInstructor(content))
+                    .companyName("ArtandStudy")
+                    .ordinaryPrice(getPrice(content))
+                    .salePrice(getSalePrice(content))
+                    .salePercent(getSalePercent(content))
+                    .siteLink(getUrl(content))
+                    .imageLink(getImage(content))
+                    .date(LocalDate.now())
+                    .build();
+
+            LectureIndex lectureIndex = LectureIndex.builder()
+                    .lectureId(getLectureId(content))
+                    .title(getTitle(content))
+                    .instructor(getInstructor(content))
+                    .companyName("ArtandStudy")
+                    .ordinaryPrice(getPrice(content))
+                    .salePrice(getSalePrice(content))
+                    .salePercent(getSalePercent(content))
+                    .imageLink(getImage(content))
+                    .build();
+
+            lectureIndexRepository.save(lectureIndex);
+            lectureRepository.save(lecture);
+
+            // 강의 태그 중간테이블을 저장한다.
+            LectureTag lectureTag = new LectureTag();
+            lectureTag.setTag(tag);
+            lectureTag.setLecture(lecture);
+            lectureTagRepository.save(lectureTag);
         }
     }
 

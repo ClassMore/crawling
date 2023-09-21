@@ -22,6 +22,10 @@ spring:
       hibernate.format_sql: true
     generate-ddl: true
 
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+
 cloud:
   aws:
     credentials:
@@ -33,6 +37,11 @@ cloud:
       static: ap-northeast-2 # 리전
     stack:
       auto: false # Spring Cloud는 환경 또는 스택을 기반으로 이를 자동으로 감지
+
+opensearch:
+  uris: https://search-classmoa-opensearch-7x7bdmp7y5oslybzbjbcaebuiy.ap-northeast-2.es.amazonaws.com
+  username: classmoa
+  password: "#3classmoa"
 
 logging:
   level:
