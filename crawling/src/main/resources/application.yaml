@@ -38,10 +38,10 @@ cloud:
     stack:
       auto: false # Spring Cloud는 환경 또는 스택을 기반으로 이를 자동으로 감지
 
-opensearch:
-  uris: https://search-classmoa-opensearch-7x7bdmp7y5oslybzbjbcaebuiy.ap-northeast-2.es.amazonaws.com
-  username: classmoa
-  password: "#3classmoa"
+#opensearch:
+#  uris: https://search-classmoa-opensearch-7x7bdmp7y5oslybzbjbcaebuiy.ap-northeast-2.es.amazonaws.com
+#  username: classmoa
+#  password: "#3classmoa"
 
 logging:
   level:

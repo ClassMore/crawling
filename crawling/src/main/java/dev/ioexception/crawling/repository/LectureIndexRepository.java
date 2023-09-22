@@ -2,10 +2,12 @@ package dev.ioexception.crawling.repository;
 
 import java.util.List;
 
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import dev.ioexception.crawling.entity.LectureIndex;
 
-public interface LectureIndexRepository extends ElasticsearchRepository<LectureIndex, String> {
+@Repository
+public interface LectureIndexRepository extends CrudRepository<LectureIndex, String> {
 	List<LectureIndex> findByTitleAndInstructor(String title, String instructor);
 }
