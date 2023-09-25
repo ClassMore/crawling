@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    username: ${username} #admin
-    password: ${password} #adminadmin
-    url: ${jdbcURL} #jdbc:mariadb://crawling-server.c4y9vm1irfhh.ap-northeast-2.rds.amazonaws.com:3306/classmoa
+    username: admin
+    password: adminadmin
+    url: jdbc:mariadb://crawling-server.c4y9vm1irfhh.ap-northeast-2.rds.amazonaws.com:3306/classmoa
     driver-class-name: org.mariadb.jdbc.Driver
 
   #의존성 추가
@@ -21,6 +21,10 @@ spring:
     properties:
       hibernate.format_sql: true
     generate-ddl: true
+
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
 
 cloud:
   aws:
@@ -38,4 +42,10 @@ logging:
   level:
     web: debug
 #  sql.init.mode: always
+
+#opensearch:
+#  uris: https://search-classmoa-opensearch-7x7bdmp7y5oslybzbjbcaebuiy.ap-northeast-2.es.amazonaws.com:9200
+#  username: classmoa
+#  password: #3Classmoa
+
 

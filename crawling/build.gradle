@@ -37,6 +37,15 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     //spring-cloud-starter-aws 라이브러리 추가
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    // opensearch 라이브러리 추가
+    implementation 'org.opensearch.client:opensearch-java:2.6.0'
+    implementation 'org.opensearch.client:opensearch-rest-client:2.9.0'
+    implementation 'org.apache.httpcomponents.core5:httpcore5:5.2.3'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+    implementation 'org.apache.httpcomponents.client5:httpclient5:5.3-alpha1'
+
+
+
 }
 
 tasks.named('test') {
