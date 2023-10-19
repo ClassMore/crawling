@@ -51,8 +51,6 @@ public class CrawlingController {
 		crawlingService.getGoorm();
 		crawlingService.getArtandStudy();
 		crawlingService.getInflearn();
-		// crawlingService.getClassu();
-		// crawlingService.getYbm();
 	}
 
 	@GetMapping("/indexing")
