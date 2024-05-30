@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+    <table class="table">
+        <tr>
+            <th>이미지</th>
+            <th>할인률</th>
+            <th>회사</th>
+            <th>강의</th>
+            <th>강사</th>
+            <th>할인 전 가격</th>
+            <th>할인 가격</th>
+        </tr>
+        <tr th:each="lecture : ${lecture} ">
+            <td><img style="width: 5rem; height: 3rem" th:src="${lecture.image_link}" alt="image"/></td>
+            <td><span th:text="${lecture.sale_percent}"></span></td>
+            <td><span th:text="${lecture.company_name}"></span></td>
+            <td><a th:href="${lecture.site_link}"><span th:text="${lecture.title}"></span></a></td>
+            <td><span th:text="${lecture.instructor}"></span></td>
+            <td><span th:text="${lecture.ordinary_price}"></span></td>
+            <td><span th:text="${lecture.sale_price}"></span></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
