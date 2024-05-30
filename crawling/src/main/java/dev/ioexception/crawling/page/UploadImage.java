@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
@@ -15,10 +16,11 @@ import java.io.InputStream;
 import java.net.URL;
 
 @Component
-// @RequiredArgsConstructor
+@RequiredArgsConstructor
 public class UploadImage {
 
-    private AmazonS3 amazonS3Client = new AmazonS3Client();
+    private final AmazonS3 amazonS3Client;
+    private final String BUCKET_NAME = "crawling-img";
 
     // 이미지 데이터를 바로 S3에 업로드
     public String uploadFromUrlToS3(String imageUrl, String dirName, String filename) throws IOException {
@@ -28,6 +30,7 @@ public class UploadImage {
         // S3에 저장할 파일명 생성
         String fileName = dirName + "/" + filename + ".jpg";  // 확장자는 이미지 종류에 따라 변경
         ObjectMetadata objectMetadata = new ObjectMetadata();
+
         if (imageBytes != null) {
             objectMetadata.setContentLength(imageBytes.length);
         } else {
@@ -36,11 +39,11 @@ public class UploadImage {
 
         // S3에 파일 업로드
         amazonS3Client.putObject(
-                new PutObjectRequest("classmoaimage", fileName, new ByteArrayInputStream(imageBytes), objectMetadata)
+                new PutObjectRequest(BUCKET_NAME, fileName, new ByteArrayInputStream(imageBytes), objectMetadata)
                         .withCannedAcl(CannedAccessControlList.PublicRead));
 
         // 업로드된 이미지 URL 반환
-        return amazonS3Client.getUrl("classmoaimage", fileName).toString();
+        return amazonS3Client.getUrl(BUCKET_NAME, fileName).toString();
     }
 
     private byte[] readImageBytes(String imageUrl) throws IOException {

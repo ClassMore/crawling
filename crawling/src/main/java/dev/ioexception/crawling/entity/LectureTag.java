@@ -1,10 +1,7 @@
 package dev.ioexception.crawling.entity;
 
-import static jakarta.persistence.FetchType.*;
+import static jakarta.persistence.FetchType.EAGER;
 
-import org.springframework.transaction.annotation.Transactional;
-
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,11 +19,11 @@ public class LectureTag {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long lectagId;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne
     @JoinColumn(name = "lecture_id", referencedColumnName = "lecture_id")
     private Lecture lecture;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne
     @JoinColumn(name = "tagId")
     private Tag tag;
 

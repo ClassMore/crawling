@@ -27,7 +27,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359'
     implementation 'org.jsoup:jsoup:1.15.4'
-    //
+
     //s3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
     implementation 'org.seleniumhq.selenium:selenium-java:4.1.2'
@@ -35,14 +35,24 @@ dependencies {
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    //spring-cloud-starter-aws 라이브러리 추가
-    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
     //opensearch 라이브러리 추가
     // https://mvnrepository.com/artifact/org.opensearch.client/opensearch-rest-high-level-client
-    implementation 'org.opensearch.client:opensearch-rest-high-level-client:2.10.0'
+//    implementation 'org.opensearch.client:opensearch-rest-high-level-client:2.10.0'
+    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+//    implementation 'co.elastic.clients:elasticsearch-java:8.12.1'
 
-    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
-    annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+
+
+    // aop
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    // json
+//    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
+
+    implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
+    annotationProcessor 'com.querydsl:querydsl-apt:5.1.0:jakarta'
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 }

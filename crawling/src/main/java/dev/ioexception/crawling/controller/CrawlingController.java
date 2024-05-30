@@ -16,11 +16,11 @@ public class CrawlingController {
 
     @GetMapping("/crawling")
     public void crawling() throws IOException, InterruptedException {
-        crawlingService.getMega();
-        crawlingService.getGoorm();
-        crawlingService.getArtandStudy();
+//        crawlingService.getMega();
+//        crawlingService.getGoorm();
+//        crawlingService.getArtandStudy();
         crawlingService.getInflearn();
-        indexService.inputIndex();
+//        indexService.inputIndex();
         // crawlingService.getClassu();
         // crawlingService.getYbm();
     }

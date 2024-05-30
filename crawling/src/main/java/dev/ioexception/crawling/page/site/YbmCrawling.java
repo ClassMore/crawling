@@ -34,11 +34,7 @@ public class YbmCrawling{
 	private final TagRepository tagRepository;
 	private final UploadImage uploadImage;
 
-	public List<Lecture> getSaleLecture() throws IOException, InterruptedException {
-
-		// 강의를 저장할 리스트
-		List<Lecture> lectureList = new ArrayList<>();
-
+	public void getSaleLecture() throws IOException, InterruptedException {
 		// webDriver 옵션 설정
 		ChromeOptions chromeOptions = new ChromeOptions();
 		chromeOptions.setHeadless(true);
@@ -151,7 +147,6 @@ public class YbmCrawling{
 									.imageLink(getImage(li))
 									.date(LocalDate.now())
 									.build();
-								lectureList.add(lecture);
 
 								lectureRepository.save(lecture);
 
@@ -173,8 +168,6 @@ public class YbmCrawling{
 			}
 
 		}
-
-		return lectureList;
 	}
 	private String getInstructor(WebElement li) {
 		// 강의 infobox 가져오기
@@ -193,7 +186,6 @@ public class YbmCrawling{
 		if(result.isEmpty()){
 			result = "강사없음";
 		}
-		// System.out.println("instructor = " + result);
 
 		return result;
 	}
@@ -209,9 +201,8 @@ public class YbmCrawling{
 		// 강의 infobox 가져오기
 		WebElement infobox = li.findElement(By.cssSelector("div.infobox"));
 		// 강의 제목을 가져온다.
-		String title = infobox.findElement(By.cssSelector("div.txt-1 > p > a")).getText();
 
-		return title;
+        return infobox.findElement(By.cssSelector("div.txt-1 > p > a")).getText();
 	}
 	public  String getLectureId(WebElement li){
 		// 강의 pricebox 선택하기
@@ -219,8 +210,8 @@ public class YbmCrawling{
 		// 강의 id 가져오기
 		String lecture_id = pricebox.findElement(By.cssSelector("li:nth-child(1) > span > input")).getAttribute("value");
 		int indexOfPipe = lecture_id.indexOf('|');
-		lecture_id = lecture_id.substring(0, indexOfPipe);
-		return "ybm" + lecture_id;
+
+		return "ybm" + lecture_id.substring(0, indexOfPipe);
 	}
 	public int getPrice(WebElement li){
 		// 강의 pricebox 선택하기
@@ -228,8 +219,8 @@ public class YbmCrawling{
 		// 강의 원가 가져오기
 		String price = pricebox.findElement(By.cssSelector("li:nth-child(1) > span > span")).getText();
 		String numericPart = price.replaceAll("[^0-9]", "");
-		int priceInt = Integer.parseInt(numericPart);
-		return priceInt;
+
+		return Integer.parseInt(numericPart);
 	}
 	public int getSalePrice(WebElement li){
 		// 강의 pricebox 선택하기
@@ -247,6 +238,7 @@ public class YbmCrawling{
 		} else {
 			sale_price_int = getPrice(li);
 		}
+
 		return sale_price_int;
 	}
 	public  String getSalePercent(WebElement li){
@@ -261,6 +253,7 @@ public class YbmCrawling{
 			sale_percent = salePercentElements.get(0).getText();
 			sale_percent = sale_percent.substring(0, 3);
 		}
+
 		return sale_percent;
 	}
 }
