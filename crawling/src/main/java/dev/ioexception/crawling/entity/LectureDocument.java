@@ -1,6 +1,7 @@
 package dev.ioexception.crawling.entity;
 
 import jakarta.persistence.Id;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +17,7 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 @NoArgsConstructor
 public class LectureDocument {
     @Id
-    private Long id;
+    private String id;
     private String title;
     private String instructor;
     private String companyName;
@@ -25,5 +26,5 @@ public class LectureDocument {
     private String salePercent;
     private String siteLink;
     private String imageLink;
-    private String tag;
+    private List<String> tag;
 }
