@@ -40,18 +40,20 @@ public class InflearnCrawling {
     @Transactional
     public void getLecture() {
         Document document = handleIOException(
-                () -> Jsoup.connect("https://www.inflearn.com/courses?order=recent&types=ONLINE").get()
+                () -> Jsoup.connect("https://www.inflearn.com/courses?types=ONLINE").get()
         );
 
         if (document == null) {
             return;
         }
 
-        Elements page = document.select("footer nav div.pagination_container ul.pagination-list li:last-child");
-        int lastPage = Integer.parseInt(page.select("a.pagination-link").text());
+//        Element page = document.select("div.mantine-ktc6ma div.mantine-o8b522 button.mantine-z1qa8g button:last-child").first();
+//        System.out.println(page);
+        int lastPage = 1;
         ConcurrentLinkedQueue<Lecture> lectures = new ConcurrentLinkedQueue<>();
 
-        ExecutorService executorService = Executors.newFixedThreadPool(5);
+
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
 
         for (int currentPage = 1; currentPage <= lastPage; currentPage++) {
             final int pageToCrawl = currentPage;
@@ -88,7 +90,7 @@ public class InflearnCrawling {
     public ArrayList<Lecture> crawlPage(int page) {
         ArrayList<Lecture> lectureArrayList = new ArrayList<>();
         Document documentPage = handleIOException(
-                () -> Jsoup.connect("https://www.inflearn.com/courses?order=seq&types=ONLINE&page=" + page).get()
+                () -> Jsoup.connect("https://www.inflearn.com/courses?types=ONLINE&page_number=" + page).get()
         );
 
         log.info("Crawling inflearn page: " + page);
@@ -97,11 +99,12 @@ public class InflearnCrawling {
             return null;
         }
 
-        Elements contents = documentPage.select(
-                "main.courses_main div.courses_container div.courses_card_list_body div.is-3-widescreen div.course_card_item ");
+        Elements contents = documentPage.select("ul.mantine-1avyp1d li.mantine-1avyp1d");
+        System.out.println(contents);
 
         for (Element content : contents) {
             Lecture lecture = saveLecture(content);
+            System.out.println(lecture);
 
             if (lecture != null) {
                 lectureArrayList.add(saveLecture(content));
@@ -113,10 +116,10 @@ public class InflearnCrawling {
 
     public Lecture saveLecture(Element content) {
         String lectureId = getCourseNumber(content);
-        String imageLink = handleIOException(
-                () -> uploadImage.uploadFromUrlToS3(getImage(content), SITE_NAME, lectureId));
+//        String imageLink = handleIOException(
+//                () -> uploadImage.uploadFromUrlToS3(getImage(content), SITE_NAME, lectureId));
 
-        if (getPrice(content) == -2) {
+        if (getOriginPrice(content) == -2) {
             return null;
         }
 
@@ -124,13 +127,13 @@ public class InflearnCrawling {
 
         Lecture lecture = Lecture.builder()
                 .lectureId(lectureId)
-                .imageLink(imageLink)
+                .imageLink("image link")
                 .salePercent(getSalePercent(content))
                 .title(getTitle(content))
                 .siteLink(getUrl(content))
                 .instructor(getInstructor(content))
-                .ordinaryPrice(getPrice(content))
-                .salePrice(getSalePrice(content))
+                .ordinaryPrice(getOriginPrice(content))
+                .salePrice(getBeforeDiscount(content))
                 .companyName(SITE_NAME)
                 .date(LocalDate.now())
                 .build();
@@ -166,54 +169,50 @@ public class InflearnCrawling {
     }
 
     private String getCourseNumber(Element content) {
-
-        return SITE_NAME + content.select("div[data-productid]").attr("data-productid");
+        log.info("content: {}", content.text());
+        return SITE_NAME + content.select("div.mantine-1w8yksd img").attr("abs:src").split("/")[4];
     }
 
     private String getImage(Element content) {
 
-        return content.select("div.card-image figure.is_thumbnail img").attr("abs:src");
+        return content.select("article.mantine-n8y7xk div.mantine-1w8yksd img").attr("abs:src");
     }
 
     private String getSalePercent(Element content) {
-        return content.select("div.card-image div.course_card_ribbon").text();
+        return content.select("div.mantine-1n7ftt8 p.mantine-1eaww3o").text();
     }
 
     private String getTitle(Element content) {
-        return content.select("div.card-content div.course_title").text();
+        return content.select("article.mantine-n8y7xk div.mantine-5t8g7z div.mantine-5n4x4z p.mantine-169r75g").text();
     }
 
     private String getUrl(Element content) {
-        return content.select("a.course_card_front").attr("abs:href");
+        return content.select("a").attr("abs:href");
     }
 
     private String getInstructor(Element content) {
-        return content.select("div.card-content div.instructor").text();
+        return content.select("article.mantine-n8y7xk div.mantine-5t8g7z div.mantine-5n4x4z p.mantine-17j39m6").text();
     }
 
-    private int getPrice(Element content) {
-        if (content.select("div.card-content div.price span.pay_price").text().isBlank()) {
-            String price = PRICE_PATTERN.matcher(content.select("div.card-content div.price").text()).replaceAll("").trim();
-
-            if (price.equals("무료")) {
-                return 0;
-            }
-
-            if (price.equals("미설정")) {
-                return -2;
-            }
-
-            return Integer.parseInt(price);
+    private int getOriginPrice(Element content) {
+        String price = PRICE_PATTERN.matcher(content.select("div.mantine-1n7ftt8 p.mantine-nu4660").text()).replaceAll("").trim();
+        
+        if (price.equals("무료")) {
+            return 0;
         }
-
-        return Integer.parseInt(PRICE_PATTERN.matcher(content.select("div.card-content div.price del").text()).replaceAll("").trim());
+        
+        if (price.equals("미설정")) {
+            return -2;
+        }
+        
+        return Integer.parseInt(price);
     }
 
-    private int getSalePrice(Element content) {
-        String salePrice = content.select("div.card-content div.price span.pay_price").text();
+    private int getBeforeDiscount(Element content) {
+        String salePrice = content.select("div.mantine-1n7ftt8 p.mantine-1jss0zj").text();
         if (salePrice.isBlank()) {
 
-            return getPrice(content);
+            return getOriginPrice(content);
         }
 
         return Integer.parseInt(PRICE_PATTERN.matcher(salePrice).replaceAll("").trim());
@@ -221,7 +220,7 @@ public class InflearnCrawling {
 
 
     private String getTag(Element content) {
-        return content.select("div.course_card_back div.back_course_metas div.course_categories span").text();
+        return content.select("div.mantine-1d86z2b div.mantine-1i71bpy p.mantine-10boh4h").text();
     }
 
     private <T> T handleIOException(Callable<T> callable) {
